@@ -4,6 +4,11 @@
 #include "sys/types.h"
 #include "common/base64.h"
 #include "common/common.h"
+#include <iostream>
+#include <iomanip>
+#include <vector>
+#include <string>
+#include <sstream>
 
 ZAppBundle::ZAppBundle()
 {
