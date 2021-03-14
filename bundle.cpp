@@ -419,7 +419,19 @@ bool ZAppBundle::SignNode(JValue &jvNode)
 	bool bForceSign = m_bForceSign;
 	if ("/" == strFolder && !m_strDyLibPath.empty())
 	{ //inject dylib
-		macho.InjectDyLib(m_bWeakInject, m_strDyLibPath.c_str(), bForceSign);
+		string tmp;
+		vector<string> data;
+		stringstream input(m_strDyLibPath);
+
+		while (getline(input, tmp, ',')) data.push_back(tmp);
+		
+		int count = data.size();
+
+		for (int i = 0; i < count;i++) {
+			ZLog::PrintV(">>> Inject path:%s (%s) -> %s ... \n", data[i].c_str());
+			macho.InjectDyLib(m_bWeakInject, data[i].c_str(), bForceSign);
+		} 
+		// macho.InjectDyLib(m_bWeakInject, m_strDyLibPath.c_str(), bForceSign);
 	}
 
 	if (!macho.Sign(m_pSignAsset, bForceSign, strBundleId, strInfoPlistSHA1, strInfoPlistSHA256, strCodeResData))
