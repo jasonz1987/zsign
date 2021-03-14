@@ -6,6 +6,11 @@
 #include <libgen.h>
 #include <dirent.h>
 #include <getopt.h>
+#include <iostream>
+#include <iomanip>
+#include <vector>
+#include <string>
+#include <sstream>
 
 const struct option options[] = {
 	{ "debug",			no_argument,			NULL, 'd' },
@@ -171,7 +176,19 @@ int main(int argc, char *argv[])
 				if(!strDyLibFile.empty())
 				{//inject dylib
 					bool bCreate = false;
-					macho.InjectDyLib(bWeakInject, strDyLibFile.c_str(), bCreate);
+					// 循环
+					string tmp;
+    				vector<string> data;
+   					stringstream input(strDyLibFile);
+
+    				while (getline(input, tmp, ',')) data.push_back(tmp);
+    				
+    				int count = data.size();
+			
+    				for (int i = 0; i < count;i++) {
+    					ZLog::PrintV(">>> Inject path:%s (%s) -> %s ... \n", data[i].c_str());
+    					macho.InjectDyLib(bWeakInject, data[i].c_str(), bCreate);
+    				} 
 				}
 				else
 				{
